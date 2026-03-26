@@ -13,6 +13,8 @@ struct ContentView: View {
     @State private var hp: String = ""
     @State private var attack: String = ""
     @State private var defence: String = ""
+    @State private var showMessage = false
+    @State private var alertMessage = ""
     
     @State private var pokemons: [Pokemon] = [
         Pokemon(name: "Charmander", type: "Fire", hp: 39, attack: 52, defence: 43),
@@ -60,13 +62,28 @@ struct ContentView: View {
                 .padding(.horizontal)
             
             Button("Save") {
-                let hpValue = Int(hp) ?? 0
-                let attackValue = Int(attack) ?? 0
-                let defenceValue = Int(defence) ?? 0
+                
+                guard !name.isEmpty,
+                      !type.isEmpty,
+                      let hpValue = Int(hp),
+                      let attackValue = Int(attack),
+                      let defenceValue = Int(defence)
+                else {
+                    alertMessage = "Fyll i alla fält"
+                    showMessage = true
+                    return
+                }
                 pokemons.append(Pokemon(name: name, type: type, hp: hpValue, attack: attackValue, defence: defenceValue))
+                
+                name = ""
+                type = ""
+                attack = ""
+                defence = ""
             }
             Spacer()
-                
+            .alert(alertMessage, isPresented: $showMessage) {
+                Button("OK", role: .cancel) { }
+            }
         }
     }
 }
